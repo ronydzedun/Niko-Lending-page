@@ -1,0 +1,1913 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Нико - помощник в отказе от никотина</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-sand: #F9F8F7;
+      --brand-sky: #CBE3FF;
+      --brand-sun: #FFD56F;
+      --brand-leaf: #C7E8A9;
+      --brand-ink: #4A4A4A;
+      --brand-border: #E1DCD5;
+      --accent-blue: #4A7CF6;
+      --accent-green: #34C77B;
+      --sos-red: #FF4B4B;
+      --sand: var(--brand-sand);
+      --sky: var(--brand-sky);
+      --sun: var(--brand-sun);
+      --leaf: var(--brand-leaf);
+      --ink: var(--brand-ink);
+      --muted: color-mix(in srgb, #4A4A4A 64%, transparent);
+      --border: var(--brand-border);
+      --blue: var(--accent-blue);
+      --blue-soft: #6B9BFF;
+      --green: var(--accent-green);
+      --red: var(--sos-red);
+      --white: rgba(255, 255, 255, 0.82);
+      --shadow-soft: 0 14px 36px rgba(203, 227, 255, 0.38);
+      --shadow-card: 0 2px 16px rgba(203, 227, 255, 0.25);
+      --surface-strong: rgba(255, 255, 255, 0.88);
+      --surface-soft: rgba(255, 255, 255, 0.82);
+      --surface-line: rgba(225, 220, 213, 0.7);
+      --blue-tint: #eef3ff;
+      --green-tint: #e7f6e8;
+      --red-tint: #ffeded;
+      --amber-tint: #fff5e2;
+      --warm-tint: #ffe6cc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #F9F8F7;
+      color: #4A4A4A;
+      font-family: "Nunito Sans", "SF Pro Rounded", Inter, system-ui, sans-serif;
+      letter-spacing: 0.01em;
+      min-height: 100vh;
+      overscroll-behavior: none;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      position: relative;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top right, rgba(203, 227, 255, 0.55), transparent 45%),
+        radial-gradient(circle at bottom left, rgba(186, 214, 255, 0.32), transparent 50%),
+        #F9F8F7;
+      overflow: hidden;
+    }
+
+    .blob {
+      pointer-events: none;
+      position: fixed;
+      border-radius: 9999px;
+      filter: blur(60px);
+      z-index: 0;
+    }
+
+    .blob-tr {
+      top: -60px;
+      right: -60px;
+      width: 220px;
+      height: 220px;
+      background: rgba(203, 227, 255, 0.55);
+    }
+
+    .blob-bl {
+      bottom: -80px;
+      left: -60px;
+      width: 260px;
+      height: 260px;
+      background: rgba(186, 214, 255, 0.35);
+    }
+
+    .press {
+      transition: transform 0.12s, opacity 0.12s;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+    }
+
+    .press:active {
+      transform: scale(0.96);
+      opacity: 0.85;
+    }
+
+    @keyframes sosPulse {
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(255,75,75,.4);
+      }
+
+      50% {
+        box-shadow: 0 0 0 14px rgba(255, 75, 75, 0);
+      }
+    }
+
+    .sos-pulse {
+      animation: sosPulse 1.9s ease-in-out infinite;
+    }
+
+    @keyframes breathePulse {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.18);
+      }
+    }
+
+    .breathe-pulse {
+      animation: breathePulse 4s ease-in-out infinite;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.35s ease both;
+    }
+
+    .pattern-callout {
+      background: linear-gradient(135deg, #FFFBEB, #FFF3D0);
+      border: 1.5px solid rgba(245, 200, 66, 0.5);
+      border-radius: 24px;
+      padding: 16px;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 24px;
+      box-shadow: 0 14px 36px rgba(203, 227, 255, 0.38);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      padding: 16px;
+    }
+
+    .shadow-softer {
+      box-shadow: 0 2px 12px rgba(203, 227, 255, 0.3) !important;
+    }
+
+    .nav-bar {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-top: 1px solid rgba(225, 220, 213, 0.6);
+      box-shadow: 0 -4px 20px rgba(203, 227, 255, 0.3);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(203, 227, 255, 0.4);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress-bar span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, #4A7CF6, #34C77B);
+      border-radius: 9999px;
+      transition: width 0.5s ease;
+    }
+
+    .ring-emoji {
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(203, 227, 255, 0.4));
+      box-shadow: 0 4px 12px rgba(203, 227, 255, 0.4);
+    }
+
+    .counter-number {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .bubble-bot {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(225, 220, 213, 0.7);
+      border-radius: 4px 18px 18px 18px;
+      box-shadow: 0 2px 8px rgba(203, 227, 255, 0.25);
+      color: #4A4A4A;
+      line-height: 1.5;
+    }
+
+    .bubble-me {
+      background: linear-gradient(135deg, #4A7CF6, #6B9BFF);
+      border-radius: 18px 4px 18px 18px;
+      color: #fff;
+      line-height: 1.5;
+      box-shadow: 0 4px 12px rgba(74, 124, 246, 0.3);
+    }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      height: 100svh;
+      min-height: 100svh;
+      padding: 22px clamp(18px, 4vw, 56px) 0;
+      overflow: hidden;
+    }
+
+    .nav {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      width: min(1120px, 100%);
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 16px;
+      background: #74A0C5;
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    .brand-mark img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 16px;
+      border: 1px solid rgba(225, 220, 213, 0.7);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.88);
+      color: color-mix(in srgb, #4A4A4A 74%, transparent);
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: var(--shadow-card);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero-center {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 370px);
+      align-items: center;
+      gap: clamp(30px, 6vw, 76px);
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 34px 0 120px;
+      transform: translateY(-56px);
+    }
+
+    .hero-copy {
+      justify-self: center;
+      max-width: 670px;
+      text-align: center;
+      transform: translateY(-28px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding: 9px 13px;
+      border: 1px solid rgba(225, 220, 213, 0.7);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      color: color-mix(in srgb, #4A4A4A 68%, transparent);
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: var(--shadow-card);
+      backdrop-filter: blur(14px);
+    }
+
+    h1 {
+      max-width: 760px;
+      font-size: clamp(42px, 6.2vw, 82px);
+      font-weight: 900;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 610px;
+      margin: 22px auto 0;
+      color: var(--muted);
+      font-size: clamp(18px, 2.1vw, 22px);
+      font-weight: 600;
+      line-height: 1.42;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .cta-primary,
+    .cta-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 58px;
+      border-radius: 19px;
+      font-size: 17px;
+      font-weight: 900;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+    }
+
+    .cta-primary {
+      min-width: 246px;
+      padding: 0 27px;
+      background: linear-gradient(135deg, var(--blue), var(--blue-soft));
+      color: white;
+      box-shadow: 0 18px 36px rgba(74, 124, 246, 0.3);
+    }
+
+    .cta-primary:hover,
+    .cta-secondary:hover,
+    .nav-link:hover {
+      transform: translateY(-1px);
+    }
+
+    .cta-primary:active,
+    .cta-secondary:active,
+    .nav-link:active {
+      transform: scale(0.98);
+      opacity: 0.88;
+    }
+
+    .cta-secondary {
+      min-width: 176px;
+      padding: 0 22px;
+      border: 1px solid rgba(225, 220, 213, 0.7);
+      background: rgba(255, 255, 255, 0.88);
+      color: color-mix(in srgb, #4A4A4A 78%, transparent);
+      box-shadow: var(--shadow-card);
+      backdrop-filter: blur(14px);
+    }
+
+    .cta-note {
+      margin-top: 12px;
+      color: color-mix(in srgb, #4A4A4A 48%, transparent);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .phone-wrap {
+      position: relative;
+      justify-self: center;
+      margin-top: 34px;
+    }
+
+    .phone-glow {
+      position: absolute;
+      inset: 6% -12% auto;
+      height: 70%;
+      border-radius: 40px;
+      background: linear-gradient(135deg, rgba(74, 124, 246, 0.25), rgba(52, 199, 123, 0.14));
+      filter: blur(24px);
+    }
+
+    .phone {
+      position: relative;
+      width: min(340px, 82vw);
+      border: 10px solid #4A4A4A;
+      border-radius: 38px;
+      background:
+        radial-gradient(circle at top right, rgba(203, 227, 255, 0.55), transparent 58%),
+        var(--sand);
+      box-shadow: 0 24px 60px rgba(31,42,58,.25);
+      overflow: hidden;
+    }
+
+    .phone::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      z-index: 2;
+      width: 82px;
+      height: 22px;
+      border-radius: 0 0 14px 14px;
+      background: #4A4A4A;
+      transform: translateX(-50%);
+    }
+
+    .phone::after {
+      content: none;
+    }
+
+    .phone-screen {
+      position: relative;
+      height: 640px;
+      padding: 0;
+      background:
+        radial-gradient(circle at top right, rgba(203, 227, 255, 0.55), transparent 45%),
+        radial-gradient(circle at bottom left, rgba(186, 214, 255, 0.32), transparent 50%),
+        #F9F8F7;
+      overflow: hidden;
+    }
+
+    .mock-dashboard {
+      --mock-scale: 0.65;
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      display: block;
+      width: 492px;
+      height: 939px;
+      margin: 0;
+      color: #4A4A4A;
+      transform: translateX(-50%) scale(var(--mock-scale));
+      transform-origin: top center;
+    }
+
+    .mock-top {
+      position: absolute;
+      top: 20px;
+      left: 16px;
+      width: 460px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .mock-eyebrow {
+      color: color-mix(in srgb, #4A4A4A 48%, transparent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+    }
+
+    .mock-title {
+      margin-top: 6px;
+      color: #4A4A4A;
+      font-size: 25px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .mock-gear {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      place-items: center;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 2px 16px rgba(203, 227, 255, 0.25);
+      color: #9B59B6;
+      font-size: 19px;
+    }
+
+    .demo-banner {
+      position: absolute;
+      top: 92px;
+      left: 24px;
+      width: 444px;
+      height: 77px;
+      display: grid;
+      grid-template-columns: 34px 1fr 18px;
+      align-items: center;
+      gap: 10px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #4A7CF6, #34C77B);
+      box-shadow: 0 14px 36px rgba(203, 227, 255, 0.38);
+      color: #fff;
+      padding: 14px 16px;
+    }
+
+    .demo-spark {
+      font-size: 22px;
+    }
+
+    .demo-kicker,
+    .section-kicker {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+    }
+
+    .demo-kicker {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .demo-banner strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .demo-arrow {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .pattern-card {
+      position: absolute;
+      top: 92px;
+      left: 16px;
+      width: 460px;
+      height: 115px;
+      padding: 16px;
+    }
+
+    .section-kicker {
+      color: color-mix(in srgb, #4A4A4A 62%, transparent);
+    }
+
+    .pattern-card p {
+      margin-top: 8px;
+      color: color-mix(in srgb, #4A4A4A 78%, transparent);
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .pattern-card span {
+      display: block;
+      margin-top: 6px;
+      color: color-mix(in srgb, #4A4A4A 58%, transparent);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .route-card {
+      padding: 16px;
+    }
+
+    .route-card h2 {
+      margin-top: 6px;
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 1.03;
+    }
+
+    .route-card p {
+      margin-top: 8px;
+      color: color-mix(in srgb, #4A4A4A 62%, transparent);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.36;
+    }
+
+    .progress {
+      width: 100%;
+      height: 6px;
+      margin-top: 15px;
+      background: rgba(203, 227, 255, 0.4);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress span {
+      display: block;
+      width: 43%;
+      height: 100%;
+      background: linear-gradient(90deg, #4A7CF6, #34C77B);
+      border-radius: 9999px;
+      transition: width 0.5s ease;
+    }
+
+    .sos-card {
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 12px;
+      margin-top: 12px;
+      background: linear-gradient(135deg, #FFFBEB, #FFF3D0);
+      border: 1.5px solid rgba(245, 200, 66, 0.5);
+      border-radius: 24px;
+      padding: 16px;
+    }
+
+    .sos-icon {
+      display: grid;
+      width: 54px;
+      height: 54px;
+      place-items: center;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--red);
+      font-size: 23px;
+      font-weight: 900;
+      animation: sosPulse 1.9s ease-in-out infinite;
+    }
+
+    .sos-card h3 {
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .sos-card p {
+      margin-top: 4px;
+      color: color-mix(in srgb, #4A4A4A 62%, transparent);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.34;
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .mini-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 10px 12px;
+      border: 1px solid rgba(225, 220, 213, 0.7);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: var(--shadow-card);
+      color: color-mix(in srgb, #4A4A4A 76%, transparent);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .mini-icon {
+      display: grid;
+      width: 32px;
+      height: 32px;
+      flex: 0 0 32px;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(203, 227, 255, 0.4));
+    }
+
+    .progress-card {
+      position: relative;
+      position: absolute;
+      top: 222px;
+      left: 16px;
+      width: 460px;
+      height: 380px;
+      overflow: hidden;
+      padding: 25px 24px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 92% 18%, rgba(203, 227, 255, 0.55), transparent 36%),
+        radial-gradient(circle at 78% 100%, #FFF3D0, transparent 44%),
+        rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 14px 36px rgba(203, 227, 255, 0.38);
+    }
+
+    .progress-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .progress-days {
+      margin-top: 8px;
+      color: #4A4A4A;
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 1.12;
+    }
+
+    .flame {
+      margin-top: 4px;
+      font-size: 20px;
+    }
+
+    .start-date {
+      margin-top: 12px;
+      color: color-mix(in srgb, #4A4A4A 58%, transparent);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .bird-badge {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      flex: 0 0 48px;
+      place-items: center;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(203, 227, 255, 0.4));
+      box-shadow: 0 4px 12px rgba(203, 227, 255, 0.4);
+      font-size: 24px;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .stat-box {
+      min-height: 64px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 2px 16px rgba(203, 227, 255, 0.25);
+      padding: 11px 12px;
+    }
+
+    .stat-box span {
+      color: color-mix(in srgb, #4A4A4A 48%, transparent);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+    }
+
+    .stat-box strong {
+      display: block;
+      margin-top: 5px;
+      color: #4A4A4A;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .panic-btn,
+    .relapse-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      border: 0;
+      font-family: inherit;
+      font-weight: 900;
+    }
+
+    .panic-btn {
+      min-height: 70px;
+      margin-top: 16px;
+      border-radius: 16px;
+      background: #FF4B4B;
+      color: #fff;
+      font-size: 16px;
+      line-height: 1.35;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(74, 124, 246, 0.3);
+    }
+
+    .relapse-btn {
+      min-height: 48px;
+      margin-top: 8px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.88);
+      color: #FF4B4B;
+      font-size: 13px;
+    }
+
+    .program-card {
+      position: absolute;
+      top: 619px;
+      left: 16px;
+      width: 460px;
+      height: 128px;
+      overflow: hidden;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 2px 16px rgba(203, 227, 255, 0.25);
+    }
+
+    .program-body {
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      gap: 10px;
+      padding: 12px 16px 10px;
+      align-items: center;
+    }
+
+    .program-emoji {
+      font-size: 26px;
+    }
+
+    .program-title {
+      color: #4A4A4A;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .program-sub {
+      margin-top: 4px;
+      color: color-mix(in srgb, #4A4A4A 48%, transparent);
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 165px;
+    }
+
+    .program-xp {
+      align-self: start;
+      color: #4A7CF6;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .program-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(225, 220, 213, 0.6);
+      background: rgba(248, 245, 240, 0.92);
+      padding: 8px 16px;
+      color: color-mix(in srgb, #4A4A4A 48%, transparent);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .program-foot strong {
+      color: #4A7CF6;
+      font-weight: 900;
+    }
+
+    .goal-card {
+      position: absolute;
+      top: 762px;
+      left: 16px;
+      width: 460px;
+      height: 160px;
+      overflow: hidden;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 2px 16px rgba(203, 227, 255, 0.25);
+      padding: 22px;
+    }
+
+    .goal-main {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .goal-icon {
+      font-size: 36px;
+      line-height: 1;
+    }
+
+    .goal-title {
+      color: #4A4A4A;
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.12;
+    }
+
+    .goal-sub {
+      margin-top: 5px;
+      color: color-mix(in srgb, #4A4A4A 58%, transparent);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .goal-progress {
+      height: 6px;
+      margin-top: 16px;
+      border-radius: 9999px;
+      background: rgba(203, 227, 255, 0.4);
+      overflow: hidden;
+    }
+
+    .goal-progress span {
+      display: block;
+      width: 43%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #4A7CF6, #34C77B);
+    }
+
+    .goal-foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 9px;
+      color: color-mix(in srgb, #4A4A4A 58%, transparent);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .goal-foot strong {
+      color: #4A7CF6;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .phone-nav {
+      position: absolute;
+      top: 876px;
+      left: 0;
+      width: 492px;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      border-radius: 24px 24px 0 0;
+      background: #fff;
+      border-top: 1px solid rgba(225, 220, 213, 0.6);
+      box-shadow: 0 -4px 20px rgba(203, 227, 255, 0.3);
+      padding: 8px 8px 18px;
+      z-index: 5;
+    }
+
+    .phone-nav-item {
+      position: relative;
+      display: flex;
+      min-width: 78px;
+      min-height: 54px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      border-radius: 16px;
+      color: color-mix(in srgb, #4A4A4A 58%, transparent);
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.1;
+      padding: 6px 12px;
+    }
+
+    .phone-nav-item.active {
+      background: #eef3ff;
+      color: #4A7CF6;
+    }
+
+    .phone-nav-item b {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .bottom-peek {
+      position: absolute;
+      right: 0;
+      bottom: -1px;
+      left: 0;
+      z-index: 4;
+      height: 116px;
+      border-top: 1px solid rgba(225, 220, 213, 0.7);
+      border-radius: 34px 34px 0 0;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(255, 245, 226, 0.95), transparent 22rem),
+        radial-gradient(circle at 86% 12%, rgba(231, 246, 232, 0.95), transparent 20rem),
+        linear-gradient(180deg, rgba(248, 245, 240, 0.96), rgba(248, 245, 240, 0.92));
+      box-shadow: 0 -18px 44px rgba(203, 227, 255, 0.25);
+      overflow: hidden;
+    }
+
+    .bottom-peek::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 44px;
+      background: linear-gradient(180deg, transparent, rgba(248, 245, 240, 0.96));
+    }
+
+    .peek-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      width: min(1120px, 100%);
+      height: 100%;
+      margin: 0 auto;
+      padding: 24px clamp(18px, 4vw, 56px) 26px;
+    }
+
+    .peek-title {
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .peek-copy {
+      margin-top: 3px;
+      color: color-mix(in srgb, #4A4A4A 58%, transparent);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .peek-arrow {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      place-items: center;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.88);
+      color: var(--blue);
+      font-size: 20px;
+      font-weight: 900;
+      box-shadow: var(--shadow-card);
+    }
+
+    .details {
+      position: relative;
+      z-index: 1;
+      padding: clamp(64px, 9vw, 110px) clamp(18px, 4vw, 56px);
+      background:
+        radial-gradient(circle at 8% 10%, rgba(255, 245, 226, 0.9), transparent 28rem),
+        radial-gradient(circle at 86% 18%, rgba(231, 246, 232, 0.9), transparent 24rem),
+        linear-gradient(180deg, rgba(248, 245, 240, 0.92), #fff);
+    }
+
+    .details:has(+ .details) {
+      margin-bottom: -34px;
+      padding-bottom: calc(clamp(64px, 9vw, 110px) + 34px);
+      border-radius: 0 0 34px 34px;
+      box-shadow: 0 18px 44px rgba(203, 227, 255, 0.18);
+    }
+
+    .details:has(+ .details) + .details {
+      padding-top: calc(clamp(64px, 9vw, 110px) + 34px);
+    }
+
+    .details-alt {
+      background:
+        radial-gradient(circle at 82% 20%, rgba(203, 227, 255, 0.55), transparent 24rem),
+        linear-gradient(180deg, #fff, rgba(248, 245, 240, 0.92));
+    }
+
+    .details + .details::before {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 56px;
+      background:
+        linear-gradient(90deg, transparent, rgba(74, 124, 246, 0.18), rgba(52, 199, 123, 0.14), transparent) top / 100% 1px no-repeat,
+        linear-gradient(180deg, rgba(203, 227, 255, 0.22), transparent 72%);
+    }
+
+    .section-inner {
+      position: relative;
+      z-index: 1;
+      width: min(1120px, 100%);
+      margin: 0 auto;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+      align-items: end;
+      gap: clamp(24px, 6vw, 76px);
+      margin-bottom: 34px;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 0 12px;
+      border: 1px solid rgba(225, 220, 213, 0.7);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      color: color-mix(in srgb, #4A4A4A 58%, transparent);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      box-shadow: var(--shadow-card);
+    }
+
+    .section-title {
+      max-width: 720px;
+      margin-top: 14px;
+      color: #4A4A4A;
+      font-size: clamp(32px, 5vw, 58px);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .section-copy {
+      color: color-mix(in srgb, #4A4A4A 66%, transparent);
+      font-size: clamp(16px, 1.8vw, 20px);
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .proof-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 42px;
+    }
+
+    .proof-item {
+      min-height: 118px;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow-card);
+    }
+
+    .proof-item strong {
+      display: block;
+      color: #4A7CF6;
+      font-size: clamp(26px, 4vw, 42px);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .proof-item span {
+      display: block;
+      margin-top: 8px;
+      color: color-mix(in srgb, #4A4A4A 64%, transparent);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .flow-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .support-panel,
+    .scenario-panel,
+    .cta-panel {
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .support-panel {
+      min-height: 100%;
+      padding: clamp(22px, 4vw, 34px);
+      background:
+        radial-gradient(circle at 90% 12%, rgba(255, 237, 237, 0.95), transparent 13rem),
+        radial-gradient(circle at 18% 92%, rgba(238, 243, 255, 0.95), transparent 16rem),
+        rgba(255, 255, 255, 0.82);
+    }
+
+    .panel-kicker {
+      margin-top: 18px;
+      color: color-mix(in srgb, #4A4A4A 55%, transparent);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+    }
+
+    .support-panel h3,
+    .scenario-panel h3,
+    .cta-panel h2 {
+      margin-top: 8px;
+      color: #4A4A4A;
+      font-size: clamp(24px, 3vw, 34px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .support-panel p:not(.panel-kicker),
+    .scenario-panel p,
+    .cta-panel p {
+      margin-top: 12px;
+      color: color-mix(in srgb, #4A4A4A 64%, transparent);
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .dialog-preview {
+      display: grid;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .dialog-preview .bubble-bot,
+    .dialog-preview .bubble-me {
+      max-width: 86%;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .dialog-preview .bubble-me {
+      justify-self: end;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .feature-item {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow-card);
+    }
+
+    .feature-item h3 {
+      color: #4A4A4A;
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    .feature-item p {
+      margin-top: 5px;
+      color: color-mix(in srgb, #4A4A4A 62%, transparent);
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.42;
+    }
+
+    .feature-icon {
+      display: grid;
+      width: 56px;
+      height: 56px;
+      place-items: center;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(203, 227, 255, 0.4));
+      box-shadow: 0 4px 12px rgba(203, 227, 255, 0.4);
+      font-size: 25px;
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .scenario-panel {
+      min-height: 258px;
+      padding: 20px;
+    }
+
+    .scenario-num {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border-radius: 15px;
+      background: #eef3ff;
+      color: #4A7CF6;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .scenario-panel h3 {
+      font-size: 20px;
+    }
+
+    .scenario-panel p {
+      font-size: 14px;
+    }
+
+    .cta-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 24px;
+      padding: clamp(24px, 4vw, 40px);
+      background:
+        radial-gradient(circle at 16% 18%, rgba(255, 245, 226, 0.95), transparent 16rem),
+        linear-gradient(135deg, rgba(238, 243, 255, 0.92), rgba(231, 246, 232, 0.82));
+    }
+
+    .cta-panel .cta-primary {
+      white-space: nowrap;
+    }
+
+    @media (max-width: 900px) {
+      .hero-center {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding: 44px 0 132px;
+        transform: translateY(-22px);
+      }
+
+      .phone-wrap {
+        order: -1;
+        margin-top: 0;
+      }
+
+      .phone {
+        width: min(315px, 88vw);
+      }
+
+      .phone-screen {
+        min-height: 420px;
+      }
+
+      .mini-list {
+        display: none;
+      }
+
+      .route-card h2 {
+        font-size: 21px;
+      }
+
+      .section-head,
+      .flow-grid,
+      .cta-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .proof-strip,
+      .scenario-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .hero {
+        height: auto;
+        min-height: 100svh;
+        padding: 14px 16px 0;
+        overflow: visible;
+      }
+
+      .nav {
+        width: 100%;
+        margin-bottom: 6px;
+      }
+
+      .brand {
+        font-size: 17px;
+      }
+
+      .brand-mark {
+        width: 40px;
+        height: 40px;
+        border-radius: 15px;
+        font-size: 20px;
+      }
+
+      .nav-link {
+        display: none;
+      }
+
+      .hero-center {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 24px;
+        padding: 18px 0 18px;
+        transform: none;
+      }
+
+      .hero-copy {
+        order: 1;
+        text-align: center;
+        transform: none;
+      }
+
+      .eyebrow {
+        margin-bottom: 12px;
+        padding: 8px 11px;
+        font-size: 12px;
+      }
+
+      h1 {
+        max-width: 350px;
+        margin: 0 auto;
+        font-size: clamp(32px, 9.6vw, 44px);
+        line-height: 1.04;
+      }
+
+      .lead {
+        max-width: 340px;
+        margin-top: 14px;
+        font-size: 16px;
+        line-height: 1.36;
+      }
+
+      .cta-row {
+        margin-top: 20px;
+      }
+
+      .cta-primary,
+      .cta-secondary {
+        width: 100%;
+        min-height: 54px;
+        border-radius: 18px;
+        font-size: 16px;
+      }
+
+      .cta-secondary {
+        display: none;
+      }
+
+      .cta-note {
+        margin-top: 8px;
+        font-size: 12px;
+      }
+
+      .phone-wrap {
+        order: 2;
+        width: 100%;
+        margin-top: 2px;
+      }
+
+      .phone-glow {
+        display: block;
+        inset: 2% 8% auto;
+        height: 220px;
+        opacity: 0.8;
+      }
+
+      .phone {
+        display: block;
+        width: min(330px, 92vw);
+        margin: 0 auto;
+        border: 0;
+        border-radius: 26px;
+        background: #F9F8F7;
+        box-shadow: 0 14px 36px rgba(203, 227, 255, 0.38);
+      }
+
+      .phone::before,
+      .phone::after {
+        display: none;
+      }
+
+      .phone-screen {
+        height: 640px;
+        border-radius: 26px;
+      }
+
+      .mock-dashboard {
+        --mock-scale: 0.65;
+        top: 13px;
+      }
+
+      .bottom-peek {
+        position: relative;
+        right: auto;
+        bottom: -1px;
+        left: auto;
+        display: block;
+        width: calc(100% + 32px);
+        height: 108px;
+        margin: 8px -16px -1px;
+        border-radius: 26px 26px 0 0;
+      }
+
+      .peek-inner {
+        padding: 18px 16px 20px;
+      }
+
+      .peek-title {
+        font-size: 15px;
+      }
+
+      .peek-copy {
+        font-size: 12px;
+        line-height: 1.25;
+      }
+
+      .peek-arrow {
+        display: none;
+      }
+
+      .details {
+        padding: 58px 16px;
+      }
+
+      .details:has(+ .details) {
+        margin-bottom: -24px;
+        padding-bottom: 82px;
+        border-radius: 0 0 26px 26px;
+      }
+
+      .details:has(+ .details) + .details {
+        padding-top: 82px;
+      }
+
+      .details + .details::before {
+        height: 38px;
+      }
+
+      .section-head {
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .proof-strip,
+      .scenario-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .proof-item {
+        min-height: auto;
+      }
+
+      .feature-item {
+        grid-template-columns: 48px 1fr;
+        border-radius: 22px;
+        padding: 14px;
+      }
+
+      .feature-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        font-size: 22px;
+      }
+
+      .scenario-panel {
+        min-height: auto;
+      }
+
+      .cta-panel .cta-primary {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 620px) and (max-height: 740px) {
+      .hero-center {
+        gap: 18px;
+        padding-bottom: 18px;
+      }
+
+      .eyebrow {
+        margin-bottom: 10px;
+      }
+
+      h1 {
+        font-size: clamp(30px, 9vw, 38px);
+      }
+
+      .lead {
+        font-size: 15px;
+      }
+
+      .cta-row {
+        margin-top: 16px;
+      }
+
+      .bottom-peek {
+        height: 82px;
+      }
+
+      .peek-copy {
+        display: none;
+      }
+    }
+
+    @media (max-width: 340px) {
+      .phone {
+        width: 94vw;
+      }
+
+      .phone-screen {
+        height: 535px;
+      }
+
+      .mock-dashboard {
+        --mock-scale: 0.54;
+        top: 13px;
+      }
+    }
+
+    @media (max-height: 760px) and (min-width: 901px) {
+      .hero-center {
+        padding-top: 28px;
+        padding-bottom: 116px;
+      }
+
+      .phone-screen {
+        min-height: 440px;
+      }
+
+      h1 {
+        font-size: clamp(40px, 5.4vw, 68px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="blob blob-tr"></div>
+    <div class="blob blob-bl"></div>
+
+    <main class="hero">
+      <nav class="nav" aria-label="Главная навигация">
+        <a class="brand" href="#top" aria-label="Нико">
+          <span class="brand-mark"><img src="assets/niko-logo.jpg" alt="" /></span>
+          <span data-copy-key="nav.brand">Нико</span>
+        </a>
+        <a class="nav-link press" href="#details" data-copy-key="nav.details">Узнать подробнее</a>
+      </nav>
+
+      <section class="hero-center" id="top" aria-label="Первый экран">
+        <div class="hero-copy">
+          <div class="eyebrow" data-copy-key="hero.eyebrow">Срыв - это данные, а не провал</div>
+          <h1 data-copy-key="hero.title">Нико ведет тебя обратно к контролю</h1>
+          <p class="lead" data-copy-key="hero.lead">Персональный маршрут отказа от никотина: ежедневные шаги, SOS-помощь в момент тяги и мягкое возвращение в программу после срыва.</p>
+          <div class="cta-row">
+            <a class="cta-primary press" href="#try" data-copy-key="hero.cta_primary">Попробовать Нико</a>
+            <a class="cta-secondary press" href="#details" data-copy-key="hero.cta_secondary">Как это работает</a>
+          </div>
+          <p class="cta-note" data-copy-key="hero.note">2 минуты до старта - без давления и нотаций</p>
+        </div>
+
+        <div class="phone-wrap" aria-hidden="true">
+          <div class="phone-glow"></div>
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="mock-dashboard">
+                <div class="mock-top">
+                  <div>
+                    <div class="mock-eyebrow" data-copy-key="phone.top_label">Личный прогресс</div>
+                    <div class="mock-title" data-copy-key="phone.greeting">Привет, Друг!</div>
+                  </div>
+                  <div class="mock-gear">⚙</div>
+                </div>
+
+                <div class="pattern-card pattern-callout">
+                  <div class="section-kicker" data-copy-key="phone.pattern_label">Паттерн срывов</div>
+                  <p data-copy-key="phone.pattern_text">Большинство срывов случается суббота, вечером, триггер «алкоголь».</p>
+                  <span data-copy-key="phone.pattern_link">Открыть дневник →</span>
+                </div>
+
+                <div class="progress-card">
+                  <div class="progress-head">
+                    <div>
+                      <div class="section-kicker" data-copy-key="phone.progress_label">Без никотина</div>
+                      <div class="progress-days" data-copy-key="phone.progress_time">6 дней 19 ч 29 мин</div>
+                      <div class="flame">🔥</div>
+                      <div class="start-date" data-copy-key="phone.start_date">Старт 20 мая</div>
+                    </div>
+                    <div class="bird-badge">🕊️</div>
+                  </div>
+
+                  <div class="stat-row">
+                    <div class="stat-box">
+                      <span data-copy-key="phone.saved_label">Сэкономлено</span>
+                      <strong data-copy-key="phone.saved_value">636 ₽</strong>
+                    </div>
+                    <div class="stat-box">
+                      <span data-copy-key="phone.not_smoked_label">Не выкурено</span>
+                      <strong data-copy-key="phone.not_smoked_value">36 шт.</strong>
+                    </div>
+                  </div>
+
+                  <button class="panic-btn" data-copy-key="phone.sos_button">🚨 Хочу сорваться — поговори со мной</button>
+                  <button class="relapse-btn" data-copy-key="phone.relapse_button">Я сорвался — разобраться вместе</button>
+                </div>
+
+                <div class="program-card">
+                  <div class="program-body">
+                    <div class="program-emoji">✍️</div>
+                    <div>
+                      <div class="section-kicker" data-copy-key="phone.program_label">Программа · день 1</div>
+                      <div class="program-title" data-copy-key="phone.program_title">Подготовка к отказу</div>
+                      <div class="program-sub" data-copy-key="phone.program_sub">Живи в привычном и комфортном ритме...</div>
+                    </div>
+                    <div class="program-xp">0🔥 0 XP</div>
+                  </div>
+                  <div class="program-foot">
+                    <span data-copy-key="phone.lessons_count">0 уроков</span>
+                    <strong data-copy-key="phone.lesson_link">Открыть урок →</strong>
+                  </div>
+                </div>
+
+                <div class="goal-card">
+                  <div class="goal-main">
+                    <div class="goal-icon">🎧</div>
+                    <div>
+                      <div class="section-kicker" data-copy-key="phone.goal_label">Копим на твою цель</div>
+                      <div class="goal-title" data-copy-key="phone.goal_title">Беспроводные наушники</div>
+                      <div class="goal-sub" data-copy-key="phone.goal_sub">43% накоплено</div>
+                    </div>
+                  </div>
+                  <div class="goal-progress"><span></span></div>
+                  <div class="goal-foot">
+                    <span data-copy-key="phone.goal_amount">867 ₽ из 2 000 ₽</span>
+                    <strong data-copy-key="phone.goal_link">Изменить цель →</strong>
+                  </div>
+                </div>
+
+                <div class="phone-nav">
+                  <div class="phone-nav-item active"><b>🏠</b><span data-copy-key="phone.nav_home">Главная</span></div>
+                  <div class="phone-nav-item"><b>📚</b><span data-copy-key="phone.nav_program">Программа</span></div>
+                  <div class="phone-nav-item"><b>📓</b><span data-copy-key="phone.nav_diary">Дневник</span></div>
+                  <div class="phone-nav-item"><b>🎲</b><span data-copy-key="phone.nav_actions">Действия</span></div>
+                  <div class="phone-nav-item"><b>💬</b><span data-copy-key="phone.nav_chat">Чат</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <a class="bottom-peek" href="#details" aria-label="Перейти к подробностям">
+        <div class="peek-inner">
+          <div>
+            <div class="peek-title" data-copy-key="peek.title">Дальше - как Нико помогает удержаться</div>
+            <div class="peek-copy" data-copy-key="peek.copy">SOS в момент тяги, план после срыва, паттерны и ежедневный маршрут.</div>
+          </div>
+          <div class="peek-arrow">↓</div>
+        </div>
+      </a>
+    </main>
+
+    <section class="details" id="details" aria-label="Как Нико помогает">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <div class="section-label" data-copy-key="approach.label">подход Нико</div>
+            <h2 class="section-title" data-copy-key="approach.title">Не бросить “на силе воли”, а пройти маршрут с опорой</h2>
+          </div>
+          <p class="section-copy" data-copy-key="approach.copy">Нико не ругает и не обнуляет человека после срыва. Он помогает пережить пик тяги, разобрать триггер и вернуться к плану так, будто это часть процесса, а не конец попытки.</p>
+        </div>
+
+        <div class="proof-strip" aria-label="Почему поддержка важна">
+          <div class="proof-item">
+            <strong data-copy-key="proof.want_value">66%</strong>
+            <span data-copy-key="proof.want_text">курящих хотят отказаться от никотина, но часто остаются без ежедневной поддержки.</span>
+          </div>
+          <div class="proof-item">
+            <strong data-copy-key="proof.success_value">7-10%</strong>
+            <span data-copy-key="proof.success_text">добиваются устойчивого результата самостоятельно, без специализированного сопровождения.</span>
+          </div>
+          <div class="proof-item">
+            <strong data-copy-key="proof.plan_value">24 ч</strong>
+            <span data-copy-key="proof.plan_text">план после срыва помогает прожить следующий день без чувства “все пропало”.</span>
+          </div>
+        </div>
+
+        <div class="flow-grid">
+          <div class="support-panel">
+            <div class="ring-emoji">🚨</div>
+            <div class="panel-kicker" data-copy-key="support.label">момент тяги</div>
+            <h3 data-copy-key="support.title">Одна большая кнопка, когда уже не до меню</h3>
+            <p data-copy-key="support.copy">В острой ситуации Нико сразу открывает поддержку: разговор, дыхание, короткое действие или план “переждать волну”.</p>
+            <div class="dialog-preview" aria-hidden="true">
+              <div class="bubble-bot" data-copy-key="support.chat_1">Слышу тебя. Что происходит прямо сейчас?</div>
+              <div class="bubble-me" data-copy-key="support.chat_2">Очень тянет, я на работе</div>
+              <div class="bubble-bot" data-copy-key="support.chat_3">Давай 90 секунд без решений. Сначала дыхание, потом выберем действие.</div>
+            </div>
+          </div>
+
+          <div class="feature-list">
+            <div class="feature-item">
+              <div class="feature-icon">📚</div>
+              <div>
+                <h3 data-copy-key="feature.program_title">Программа по одному шагу в день</h3>
+                <p data-copy-key="feature.program_copy">Короткие уроки, практики и 24-часовой ритм, который возвращает в приложение без перегруза.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">📓</div>
+              <div>
+                <h3 data-copy-key="feature.diary_title">Дневник срывов без стыда</h3>
+                <p data-copy-key="feature.diary_copy">Записи превращаются в понятные паттерны: когда, с кем и из-за чего риск выше всего.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">🧭</div>
+              <div>
+                <h3 data-copy-key="feature.plan_title">План возвращения после срыва</h3>
+                <p data-copy-key="feature.plan_copy">Нико задает четыре мягких вопроса и собирает план на ближайшие 24 часа.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">🎧</div>
+              <div>
+                <h3 data-copy-key="feature.progress_title">Видимый прогресс</h3>
+                <p data-copy-key="feature.progress_copy">Дни без никотина, сэкономленные деньги, цель и “не выкурено” показывают, что усилия уже работают.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="details details-alt" aria-label="Сценарии продукта">
+      <div class="section-inner">
+        <div class="section-head">
+          <div>
+            <div class="section-label" data-copy-key="scenarios.label">внутри приложения</div>
+            <h2 class="section-title" data-copy-key="scenarios.title">Нико рядом в четырех главных ситуациях</h2>
+          </div>
+          <p class="section-copy" data-copy-key="scenarios.copy">Лендинг ведет к простому старту, а сам продукт закрывает моменты, где люди обычно остаются одни: тяга, срыв, повторяющиеся триггеры и потеря ритма.</p>
+        </div>
+
+        <div class="scenario-grid">
+          <div class="scenario-panel">
+            <div class="scenario-num">01</div>
+            <h3 data-copy-key="scenario.sos_title">Тянет прямо сейчас</h3>
+            <p data-copy-key="scenario.sos_copy">Пользователь нажимает SOS и получает короткий сценарий помощи без долгой навигации.</p>
+          </div>
+          <div class="scenario-panel">
+            <div class="scenario-num">02</div>
+            <h3 data-copy-key="scenario.relapse_title">Срыв уже случился</h3>
+            <p data-copy-key="scenario.relapse_copy">Нико помогает разобрать ситуацию, сохранить счетчик и выйти с понятным планом.</p>
+          </div>
+          <div class="scenario-panel">
+            <div class="scenario-num">03</div>
+            <h3 data-copy-key="scenario.pattern_title">Паттерн повторяется</h3>
+            <p data-copy-key="scenario.pattern_copy">Дневник показывает рискованные связки: вечер, алкоголь, компания, стресс или скука.</p>
+          </div>
+          <div class="scenario-panel">
+            <div class="scenario-num">04</div>
+            <h3 data-copy-key="scenario.rhythm_title">Нужен ритм</h3>
+            <p data-copy-key="scenario.rhythm_copy">Ежедневная программа дает следующий шаг и помогает не выпадать из попытки.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="details" id="try" aria-label="Попробовать Нико">
+      <div class="section-inner">
+        <div class="cta-panel">
+          <div>
+            <div class="section-label" data-copy-key="final.label">старт за 2 минуты</div>
+            <h2 data-copy-key="final.title">Попробуй Нико в демо-режиме</h2>
+            <p data-copy-key="final.copy">Без давления, длинных анкет и обещаний “с понедельника навсегда”. Сначала посмотри маршрут, почувствуй тон поддержки и реши, подходит ли тебе такой способ бросать.</p>
+          </div>
+          <a class="cta-primary press" href="#top" data-copy-key="final.cta">Начать знакомство</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
